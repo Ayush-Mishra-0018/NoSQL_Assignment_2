@@ -22,12 +22,12 @@ public class TopWords {
 
         @Override
         protected void setup(Context context) throws IOException {
-            BufferedReader reader = new BufferedReader(new FileReader("stopwords.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("stopwords.txt"));
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 stopWords.add(line.trim().toLowerCase());
             }
-            reader.close();
+            br.close();
         }
 
         @Override
@@ -36,7 +36,7 @@ public class TopWords {
 
             String line = value.toString().toLowerCase();
 
-            // 🔥 SAME CLEANING AS FRIEND
+            // 🔥 CLEANING (MOST IMPORTANT)
             line = line.replaceAll("http\\S+", " ");
             line = line.replaceAll("&\\w+;", " ");
             line = line.replaceAll("[^a-z ]", " ");
@@ -44,7 +44,6 @@ public class TopWords {
             String[] tokens = line.split("\\s+");
 
             for (String token : tokens) {
-
                 if (token.length() < 3) continue;
                 if (stopWords.contains(token)) continue;
 
@@ -68,7 +67,7 @@ public class TopWords {
             }
 
             public int compareTo(WordFreq o) {
-                return Integer.compare(this.freq, o.freq);
+                return Integer.compare(this.freq, o.freq); // min-heap
             }
         }
 
@@ -79,14 +78,14 @@ public class TopWords {
             for (IntWritable val : values) sum += val.get();
 
             pq.add(new WordFreq(key.toString(), sum));
-            if (pq.size() > 50) pq.poll();
+            if (pq.size() > 50) pq.poll(); // keep only top 50
         }
 
         @Override
         protected void cleanup(Context context) throws IOException, InterruptedException {
 
             List<WordFreq> list = new ArrayList<>(pq);
-            list.sort((a, b) -> b.freq - a.freq);
+            list.sort((a, b) -> b.freq - a.freq); // descending
 
             for (WordFreq wf : list) {
                 context.write(new Text(wf.word), new IntWritable(wf.freq));
@@ -97,7 +96,7 @@ public class TopWords {
     public static void main(String[] args) throws Exception {
 
         Configuration conf = new Configuration();
-        Job job = Job.getInstance(conf, "TopWords FINAL MATCH");
+        Job job = Job.getInstance(conf, "Top 50 Words");
 
         job.setJarByClass(TopWords.class);
         job.setMapperClass(MapperClass.class);
