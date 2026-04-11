@@ -1,0 +1,37 @@
+# 1. Compilation
+javac --release 11 -classpath "$(hadoop classpath)" -d build src/CoOccurence3.java
+jar cf build/CoOccurence3.jar -C build .
+
+# 2. Execution Loop for Comparison Table
+for d in 1 2 3 4; do
+    for mode in "none" "combiner" "mapclass"; do
+        
+        # Unique naming for HDFS and Local files
+        case $mode in
+            "none")     suffix="NoAgg" ;;
+            "combiner") suffix="Comb" ;;
+            "mapclass") suffix="InMap" ;;
+        esac
+        
+        hdfs_out="/Q1b_output_d${d}_${suffix}"
+        local_rt="output_local/Q1b_d${d}_${suffix}_runtime.txt"
+        local_data="output_local/Q1b_d${d}_${suffix}_results.txt"
+        
+        echo "Running: d=$d Mode=$mode"
+        hdfs dfs -rm -r $hdfs_out 2>/dev/null
+        
+        start=$SECONDS
+        hadoop jar build/CoOccurence3.jar CoOccurence3 /wiki $hdfs_out /top50.txt $d $mode
+        duration=$((SECONDS - start))
+        
+        # Save unique runtime and merge data
+        echo "Runtime (d=$d, $mode): $duration seconds" > $local_rt
+        hadoop fs -getmerge $hdfs_out $local_data
+        
+        echo "COMPLETED: Saved to $local_rt"
+    done
+done
+
+# 3. Final Summary Display
+echo "--- ALL EXPERIMENTS FINISHED ---"
+cat output_local/Q1b_d*_runtime.txt

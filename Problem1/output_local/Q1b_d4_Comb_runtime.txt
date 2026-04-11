@@ -1,0 +1,1 @@
+d=4, combiner: 347 seconds
