@@ -1,0 +1,40 @@
+===== d = 1 =====
+2026-04-11 17:50:39,229 INFO mapred.LocalDistributedCacheManager: Localized hdfs://localhost:9000/user/naveed09/stopwords.txt as file:/tmp/hadoop-naveed09/mapred/local/job_local482436708_0001_e2b81912-8dd8-4e1d-b84e-ae794e58450e/stopwords.txt
+2026-04-11 17:50:39,329 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:0+134217728
+2026-04-11 17:51:57,184 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:134217728+32004918
+2026-04-11 17:51:57,298 WARN impl.MetricsSystemImpl: JobTracker metrics system already initialized!
+2026-04-11 17:53:05,772 INFO output.FileOutputCommitter: Saved output of task 'attempt_local482436708_0001_r_000000_0' to hdfs://localhost:9000/user/naveed09/output_d1
+real	2m29.186s
+user	2m58.271s
+sys	0m5.081s
+
+===== d = 2 =====
+2026-04-11 17:53:09,638 INFO mapred.LocalDistributedCacheManager: Localized hdfs://localhost:9000/user/naveed09/stopwords.txt as file:/tmp/hadoop-naveed09/mapred/local/job_local494404949_0001_8a0ce382-8453-4f6d-8801-d9f8d7ab2bc7/stopwords.txt
+2026-04-11 17:53:09,748 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:0+134217728
+2026-04-11 17:54:58,511 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:134217728+32004918
+2026-04-11 17:54:58,618 WARN impl.MetricsSystemImpl: JobTracker metrics system already initialized!
+2026-04-11 17:56:52,045 INFO output.FileOutputCommitter: Saved output of task 'attempt_local494404949_0001_r_000000_0' to hdfs://localhost:9000/user/naveed09/output_d2
+real	3m44.788s
+user	4m14.205s
+sys	0m4.812s
+
+===== d = 3 =====
+2026-04-11 17:56:55,622 INFO mapred.LocalDistributedCacheManager: Localized hdfs://localhost:9000/user/naveed09/stopwords.txt as file:/tmp/hadoop-naveed09/mapred/local/job_local1749311235_0001_9ba883af-fdd3-448a-9818-a83d77fcc32c/stopwords.txt
+2026-04-11 17:56:55,740 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:0+134217728
+2026-04-11 17:59:03,316 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:134217728+32004918
+2026-04-11 17:59:03,433 WARN impl.MetricsSystemImpl: JobTracker metrics system already initialized!
+2026-04-11 18:00:59,516 INFO output.FileOutputCommitter: Saved output of task 'attempt_local1749311235_0001_r_000000_0' to hdfs://localhost:9000/user/naveed09/output_d3
+real	4m6.679s
+user	4m35.965s
+sys	0m6.991s
+
+===== d = 4 =====
+2026-04-11 18:01:06,895 INFO mapred.LocalDistributedCacheManager: Localized hdfs://localhost:9000/user/naveed09/stopwords.txt as file:/tmp/hadoop-naveed09/mapred/local/job_local967270524_0001_ce28f3cf-f255-49a6-bbd2-31e16f3f1f2e/stopwords.txt
+2026-04-11 18:01:07,007 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:0+134217728
+2026-04-11 18:03:23,838 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/user/naveed09/input_merged/merged_input.txt:134217728+32004918
+2026-04-11 18:03:23,931 WARN impl.MetricsSystemImpl: JobTracker metrics system already initialized!
+2026-04-11 18:05:35,431 INFO output.FileOutputCommitter: Saved output of task 'attempt_local967270524_0001_r_000000_0' to hdfs://localhost:9000/user/naveed09/output_d4
+real	4m33.954s
+user	5m5.031s
+sys	0m5.799s
+
