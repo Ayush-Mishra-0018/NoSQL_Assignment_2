@@ -1,0 +1,6 @@
+input/
+*.tar.gz
+build/
+*.class
+*.jar
+*.crc
