@@ -1,141 +1,58 @@
-# 📘 HOW TO RUN — Problem 1 (Part B)
+# Problem 1 Part (b): Co-occurring Word Matrix (Pairs Approach)
 
----
+This document contains the complete sequence of commands to generate the co-occurrence matrix and record the runtimes for distances d={1,2,3,4}.
 
-## 🧠 Overview
-
-This program computes the **co-occurrence matrix** of words using the **pairs approach**.
-
-* Uses top 50 frequent words from Part (a)
-* Computes word pairs within a distance **d**
-* Runs for **d = 1, 2, 3, 4**
-* Outputs frequency of co-occurring pairs
-
----
-
-## ⚙️ Prerequisites
-
-* Hadoop running
-* Part (a) completed
-* `a.txt` (Top 50 words) available
-
----
-
-## 🚀 STEP 1 — Upload Top 50 Words to HDFS
+# 1. HDFS Environment Reset
+Ensure the Top 50 results from Part (a) are correctly placed in HDFS for the Distributed Cache.
 
 ```bash
+# Clean up old output and metadata files
+hdfs dfs -rm -r /output_b_d1 /output_b_d2 /output_b_d3 /output_b_d4 2>/dev/null
+hdfs dfs -rm /top50.txt 2>/dev/null
+
+# Upload the frequent words list (a.txt) from your local output_local folder to HDFS root
 hdfs dfs -put output_local/a.txt /top50.txt
-```
 
----
+# Compile from the Problem1 root directory
+javac --release 11 -classpath "$(hadoop classpath)" -d build src/CoOccurrence2.java
 
-## 🔨 STEP 2 — Compile
-
-```bash
-javac --release 11 -classpath "$(hadoop classpath)" -d build src/CoOccurrence.java
-```
-
----
-
-## 📦 STEP 3 — Create JAR
-
-```bash
+# Create the executable JAR file
 cd build
-jar cf CoOccurrence.jar *.class
+jar cf CoOccurrence2.jar *.class
 cd ..
-```
 
----
+Run this script block to execute all four experiments sequentially. It calculates the runtime for each job and saves it to a dedicated text file in output_local.
 
-## 🧹 STEP 4 — Run for different distances
+Bash
 
----
+run_experiment() {
+    d=$1
+    out_path="/output_b_d${d}"
+    rt_log="output_local/1b_d${d}_rt.txt"
+    
+    echo "------------------------------------------"
+    echo "Starting MapReduce Job for distance d=${d}..."
+    
+    # Capture start time in seconds using the shell's built-in variable
+    start_time=$SECONDS
+    
+    # Execute the Pairs algorithm
+    # Args: <JarPath> <ClassName> <InputPath> <OutputPath> <Top50CachePath> <DistanceValue>
+    hadoop jar build/CoOccurrence2.jar CoOccurrence2 /wiki $out_path /top50.txt $d
+    
+    # Calculate duration
+    end_time=$SECONDS
+    duration=$((end_time - start_time))
+    
+    # Save runtime and merge results into a single readable file
+    echo "Distance d=${d} Runtime: ${duration} seconds" > "$rt_log"
+    hadoop fs -getmerge $out_path "output_local/1b_d${d}.txt"
+    
+    echo "DONE: d=${d} completed in ${duration}s."
+}
 
-### ▶️ d = 1
-
-```bash
-hdfs dfs -rm -r /output_b_d1
-hadoop jar build/CoOccurrence.jar CoOccurrence /wiki /output_b_d1 /top50.txt 1
-```
-
----
-
-### ▶️ d = 2
-
-```bash
-hdfs dfs -rm -r /output_b_d2
-hadoop jar build/CoOccurrence.jar CoOccurrence /wiki /output_b_d2 /top50.txt 2
-```
-
----
-
-### ▶️ d = 3
-
-```bash
-hdfs dfs -rm -r /output_b_d3
-hadoop jar build/CoOccurrence.jar CoOccurrence /wiki /output_b_d3 /top50.txt 3
-```
-
----
-
-### ▶️ d = 4
-
-```bash
-hdfs dfs -rm -r /output_b_d4
-hadoop jar build/CoOccurrence.jar CoOccurrence /wiki /output_b_d4 /top50.txt 4
-```
-
----
-
-## 📊 STEP 5 — Save Output to Local Files
-
-```bash
-hdfs dfs -cat /output_b_d1/part-r-00000 > output_local/1b_d1.txt
-hdfs dfs -cat /output_b_d2/part-r-00000 > output_local/1b_d2.txt
-hdfs dfs -cat /output_b_d3/part-r-00000 > output_local/1b_d3.txt
-hdfs dfs -cat /output_b_d4/part-r-00000 > output_local/1b_d4.txt
-```
-
----
-
-## 📁 Final Output Files
-
-```text
-output_local/
- ├── 1b_d1.txt
- ├── 1b_d2.txt
- ├── 1b_d3.txt
- └── 1b_d4.txt
-```
-
----
-
-## 🧠 Output Format
-
-Each line represents a co-occurring pair:
-
-```text
-word1,word2    frequency
-```
-
-Example:
-
-```text
-data,science    15
-science,data    15
-```
-
----
-
-## 🧠 Notes
-
-* Only top 50 words from Part (a) are considered
-* Distance `d` controls how far apart words can be
-* Larger `d` → more pairs → higher counts
-* Results are based on **pairs approach**
-
----
-
-## 🎯 End of Execution
-
----
+# Run the automated tasks for d=1, 2, 3, and 4
+run_experiment 1
+run_experiment 2
+run_experiment 3
+run_experiment 4
