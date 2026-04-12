@@ -1,0 +1,20 @@
+===== INMAP d = 1 =====
+real	1m6.150s
+user	2m23.608s
+sys	0m4.654s
+
+===== INMAP d = 2 =====
+real	2m28.842s
+user	5m11.532s
+sys	0m6.577s
+
+===== INMAP d = 3 =====
+real	2m42.642s
+user	6m7.853s
+sys	0m6.655s
+
+===== INMAP d = 4 =====
+real	3m2.319s
+user	7m20.430s
+sys	0m7.656s
+
