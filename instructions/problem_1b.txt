@@ -1,0 +1,87 @@
+Problem 1 Part (b): Co-occurring Word Matrix (Pairs Approach)
+
+This section outlines the complete sequence of steps used to generate the co-occurrence matrix for different window distances d = {1, 2, 3, 4}, along with recording execution runtimes for each experiment.
+
+1. HDFS Environment Reset
+
+Before executing the MapReduce jobs, the HDFS environment is cleaned to remove any previous outputs and ensure a fresh run.
+
+hdfs dfs -rm -r /output_b_d1 /output_b_d2 /output_b_d3 /output_b_d4 2>/dev/null
+hdfs dfs -rm /top50.txt 2>/dev/null
+
+The first command removes any existing output directories for different values of d.
+The second command deletes the previously uploaded top frequent words file if it exists.
+
+Next, the Top 50 frequent words file generated in Part (a) is uploaded to HDFS:
+
+hdfs dfs -put output_local/a.txt /top50.txt
+
+This file is later used via the Distributed Cache to filter relevant words during co-occurrence computation.
+
+2. Compilation and Packaging
+
+The Java source file for the Pairs approach is compiled and packaged into a JAR file.
+
+javac --release 11 -classpath "$(hadoop classpath)" -d build src/CoOccurrence2.java
+
+The above command compiles the source file using Java 11 and includes the Hadoop classpath. The compiled class files are stored in the build directory.
+
+Next, the compiled classes are packaged into a JAR file:
+
+cd build
+jar cf CoOccurrence2.jar *.class
+cd ..
+
+This JAR file is required to execute the MapReduce job on Hadoop.
+
+3. Automated Execution Script for Experiments
+
+A reusable Bash function is defined to execute the MapReduce job for a given distance value d, measure runtime, and store results.
+
+run_experiment() {
+    d=$1
+    out_path="/output_b_d${d}"
+    rt_log="output_local/1b_d${d}_rt.txt"
+    
+    echo "------------------------------------------"
+    echo "Starting MapReduce Job for distance d=${d}..."
+    
+    # Capture start time
+    start_time=$SECONDS
+    
+    # Execute the MapReduce job using the Pairs approach
+    hadoop jar build/CoOccurrence2.jar CoOccurrence2 /wiki $out_path /top50.txt $d
+    
+    # Capture end time and compute duration
+    end_time=$SECONDS
+    duration=$((end_time - start_time))
+    
+    # Save runtime and merge results locally
+    echo "Distance d=${d} Runtime: ${duration} seconds" > "$rt_log"
+    hadoop fs -getmerge $out_path "output_local/1b_d${d}.txt"
+    
+    echo "DONE: d=${d} completed in ${duration}s."
+}
+
+This function performs the following tasks:
+- Executes the MapReduce job with the specified window distance.
+- Measures execution time using the shell’s built-in SECONDS variable.
+- Stores runtime information in a dedicated text file.
+- Merges HDFS output into a single readable local file.
+
+4. Running Experiments for Multiple Distances
+
+The function is executed sequentially for all required distance values:
+
+run_experiment 1
+run_experiment 2
+run_experiment 3
+run_experiment 4
+
+Each execution generates:
+- A runtime log file (1b_dX_rt.txt)
+- A merged output file containing co-occurrence results (1b_dX.txt)
+
+Summary
+
+This workflow automates the execution of multiple MapReduce jobs for different window sizes, ensures proper reuse of intermediate data (Top 50 words), and provides both performance metrics and readable outputs for analysis.
