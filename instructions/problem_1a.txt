@@ -1,0 +1,49 @@
+Execution Steps and Commands
+
+The following sequence of commands was executed to compile, run, and retrieve the results of the Hadoop MapReduce job for identifying the top frequent words.
+
+1. Cleaning Previous Outputs
+
+Before running the job, any existing output directories in HDFS and local result files were removed to avoid conflicts:
+
+hdfs dfs -rm -r /output_a_big
+rm -f output_local/a.txt
+
+The first command deletes the output directory from HDFS.
+The second command removes any previously stored local output file.
+
+2. Compilation and Packaging
+
+The Java source file was compiled and packaged into a JAR file for execution on Hadoop:
+
+javac --release 11 -classpath "$(hadoop classpath)" -d build src/TopWordsOnBigData.java
+jar cf build/TopWordsOnBigData.jar -C build .
+
+The javac command compiles the source code using Java 11 compatibility and includes the Hadoop classpath.
+The compiled class files are stored in the build directory.
+The jar command packages the compiled classes into a JAR file required for Hadoop execution.
+
+3. Job Execution with Runtime Measurement
+
+The MapReduce job was executed using the Hadoop framework, with runtime tracking enabled:
+
+time hadoop jar build/TopWordsOnBigData.jar TopWordsOnBigData /wiki /output_a_big /wiki/stopwords.txt
+
+The time command records execution metrics such as real, user, and system time.
+The input dataset is located in /wiki on HDFS.
+Output is written to /output_a_big.
+A stopwords file is provided to filter out common words during processing.
+
+4. Retrieving and Verifying Results
+
+After execution, the results were merged and stored locally for inspection:
+
+hadoop fs -getmerge /output_a_big output_local/a.txt
+cat output_local/a.txt
+
+The -getmerge command combines all output part files from HDFS into a single local file.
+The cat command displays the contents of the output file for verification.
+
+Summary
+
+This workflow ensures a clean execution environment, proper compilation and packaging, accurate runtime measurement, and easy retrieval and verification of results.
