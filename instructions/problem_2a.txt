@@ -1,0 +1,98 @@
+==============================
+Problem 2(a): Document Frequency (DF)
+==============================
+
+This program computes the Document Frequency (DF) of each term across the Wikipedia dataset using Hadoop MapReduce.
+
+-----------------------------------
+Prerequisites
+-----------------------------------
+1. Hadoop installed and configured (HDFS + YARN)
+2. Java (JDK 8 or above)
+3. Input dataset:
+   Wikipedia-EN-20120601_ARTICLES
+4. Stopwords file:
+   stopwords.txt
+5. JAR file:
+   DFProject-clean.jar
+
+-----------------------------------
+Step 1: Start Hadoop
+-----------------------------------
+start-dfs.sh
+start-yarn.sh
+
+Verify:
+jps
+
+Expected services:
+- NameNode
+- DataNode
+- ResourceManager
+- NodeManager
+
+-----------------------------------
+Step 2: Create HDFS Directories
+-----------------------------------
+hdfs dfs -mkdir -p /user/harsh/input
+hdfs dfs -mkdir -p /user/harsh/output
+
+-----------------------------------
+Step 3: Upload Input Data to HDFS
+-----------------------------------
+hdfs dfs -put Wikipedia-EN-20120601_ARTICLES /user/harsh/input/
+hdfs dfs -put stopwords.txt /user/harsh/input/
+
+Verify:
+hdfs dfs -ls /user/harsh/input
+
+-----------------------------------
+Step 4: Run MapReduce Job
+-----------------------------------
+hadoop jar DFProject-clean.jar DFWordCount \
+/user/harsh/input/Wikipedia-EN-20120601_ARTICLES \
+/user/harsh/output/df_output \
+/user/harsh/input/stopwords.txt
+
+-----------------------------------
+Step 5: Check Output in HDFS
+-----------------------------------
+hdfs dfs -ls /user/harsh/output/df_output
+
+Expected:
+- part-r-00000
+- _SUCCESS
+
+-----------------------------------
+Step 6: Retrieve Output to Local
+-----------------------------------
+hdfs dfs -get /user/harsh/output/df_output ./df_output_hdfs
+
+-----------------------------------
+Step 7: Merge Output File
+-----------------------------------
+cat df_output_hdfs/part-r-00000 > df_full.tsv
+
+-----------------------------------
+Step 8: Extract Top 100 Terms
+-----------------------------------
+cat df_full.tsv | sort -k2 -nr | head -100 > df_top100_hdfs.tsv
+
+-----------------------------------
+Output Format
+-----------------------------------
+Each line in output:
+TERM    DF
+
+Example:
+data    42
+system  35
+model   28
+
+-----------------------------------
+Notes
+-----------------------------------
+- Stopwords are removed using distributed cache
+- Porter stemming is applied to normalize terms
+- Each term is counted once per document (DF logic)
+- Output is stored in TSV format
