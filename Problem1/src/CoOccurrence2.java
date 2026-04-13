@@ -111,14 +111,14 @@ public class CoOccurrence2 {
         job.setJarByClass(CoOccurrence2.class);
 
         job.setMapperClass(PairsMapper.class);
-        // Requirement: Local aggregation at Map-function level (Combiner) [cite: 19]
+        // Requirement: Local aggregation at Map-function level (Combiner) 
         job.setCombinerClass(IntSumReducer.class); 
         job.setReducerClass(IntSumReducer.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
-        // Add the top 50 words file to distributed cache [cite: 15]
+        // Add the top 50 words file to distributed cache 
         job.addCacheFile(new Path(args[2]).toUri());
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
