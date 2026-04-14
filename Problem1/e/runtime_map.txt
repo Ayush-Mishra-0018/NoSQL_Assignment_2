@@ -1,0 +1,20 @@
+===== MAP d = 1 =====
+real	1m19.941s
+user	2m33.646s
+sys	0m5.652s
+
+===== MAP d = 2 =====
+real	1m49.481s
+user	3m54.096s
+sys	0m9.460s
+
+===== MAP d = 3 =====
+real	2m5.252s
+user	5m31.803s
+sys	0m7.615s
+
+===== MAP d = 4 =====
+real	3m43.732s
+user	7m48.703s
+sys	0m8.138s
+
