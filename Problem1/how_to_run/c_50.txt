@@ -1,0 +1,35 @@
+start-dfs.sh
+sleep 5
+hdfs dfsadmin -safemode leave
+
+javac -classpath `hadoop classpath` -d build stripe_50.java
+jar -cvf stripe.jar -C build/ .
+
+for d in 1 2 3 4; do
+    hdfs dfs -rm -r /user/$USER/output_d${d} 2>/dev/null
+
+    echo "===== d = ${d} =====" >> rutnimes.txt
+
+    { time HADOOP_OPTS="-Xmx4g" hadoop jar stripe.jar stripe_50 \
+        /user/$USER/input_merged \
+        /user/$USER/output_d${d} \
+        /user/$USER/stopwords.txt \
+        ${d} \
+        /user/$USER/words.txt; } 2> time_tmp.txt
+
+    cat time_tmp.txt
+    grep -E "^real|^user|^sys" time_tmp.txt >> rutnimes.txt
+    echo "" >> rutnimes.txt
+done
+
+rm time_tmp.txt
+
+mkdir -p outputs
+
+for d in 1 2 3 4; do
+    hdfs dfs -get /user/$USER/output_d${d}/part-r-00000 outputs/output_d${d}.txt
+done
+
+rm /tmp/merged_input.txt
+
+stop-dfs.sh
