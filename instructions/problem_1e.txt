@@ -1,99 +1,87 @@
+Instructions to Run Stripe 
 
-#  **Instructions to Run Stripe (MapFunction vs InMapper)**
-
-##  1. Required Files
+1. Required Files
 
 Make sure the following files are present:
 
-###  Code Files
+Code Files
 
-* `StripeMapFunction.java`
-* `StripeInMapper.java`
+ `StripeMapFunction.java`
+ `StripeInMapper.java`
 
-###  Supporting File
+Supporting File
 
-* `stopwords.txt`
+ `stopwords.txt`
 
-###  Dataset
+Dataset
 
-* Folder: `Wikipedia-EN-20120601_ARTICLES` 
+ Folder: `Wikipedia-EN-20120601_ARTICLES` 
 
 ---
 
-##  Directory Structure
+Directory Structure
 
-```text
+text
 project/
 │── StripeMapFunction.java
 │── StripeInMapper.java
 │── stopwords.txt
 │── Wikipedia-EN-20120601_ARTICLES/
-```
+
 
 ---
 
-#  2. Start Hadoop & Upload Data
+2. Start Hadoop & Upload Data
 
-```bash
+
 start-dfs.sh
 
 hdfs dfs -mkdir -p /user/$USER/input
 
-# Upload dataset
 hdfs dfs -put ../Wikipedia-EN-20120601_ARTICLES /user/$USER/input/
 
-# Upload stopwords
 hdfs dfs -put stopwords.txt /user/$USER/
-```
+
 
 ---
 
-#  3. Merge Dataset 
+1. Merge Dataset 
 
-
-
-```bash
 hdfs dfs -getmerge /user/$USER/input/Wikipedia-EN-20120601_ARTICLES /tmp/merged_input.txt
-```
 
-Re-upload merged file:
-
-```bash
 hdfs dfs -rm -r /user/$USER/input_merged 2>/dev/null
 hdfs dfs -mkdir -p /user/$USER/input_merged
 hdfs dfs -put /tmp/merged_input.txt /user/$USER/input_merged/
-```
+
 
 ---
 
-#  4. Compile & Create JARs
+1. Compile & Create JARs
 
-```bash
-# MapFunction version
+
 javac -classpath `hadoop classpath` -d build_map StripeMapFunction.java
 jar -cvf stripe_map.jar -C build_map/ .
 
-# InMapper version
 javac -classpath `hadoop classpath` -d build_inmap StripeInMapper.java
 jar -cvf stripe_inmap.jar -C build_inmap/ .
-```
+
 
 ---
 
-#  5. Run the Script
+1. Run the Script
 
-```bash
+
 sleep 5
 hdfs dfsadmin -safemode leave
 
 mkdir -p outputs
-```
+
 
 ---
 
-##  Run MapFunction
+Run MapFunction
 
-```bash
+
 for d in 1 2 3 4; do
     hdfs dfs -rm -r /user/$USER/out_map_d${d} 2>/dev/null
 
@@ -109,13 +97,13 @@ for d in 1 2 3 4; do
     grep -E "^real|^user|^sys" time_tmp.txt >> runtime_map.txt
     echo "" >> runtime_map.txt
 done
-```
+
 
 ---
 
-##  Run In-Mapper Combiner
+Run In-Mapper Combiner
 
-```bash
+
 for d in 1 2 3 4; do
     hdfs dfs -rm -r /user/$USER/out_inmap_d${d} 2>/dev/null
 
@@ -133,29 +121,29 @@ for d in 1 2 3 4; do
 done
 
 rm time_tmp.txt
-```
+
 
 ---
 
-#  6. Download Outputs
+6. Download Outputs
 
-```bash
+
 for d in 1 2 3 4; do
     hdfs dfs -getmerge /user/$USER/out_map_d${d} outputs/map_d${d}.txt
     hdfs dfs -getmerge /user/$USER/out_inmap_d${d} outputs/inmap_d${d}.txt
 done
-```
+
 
 ---
 
-#  7. Cleanup
+7. Cleanup
 
-```bash
+
 rm /tmp/merged_input.txt
 stop-dfs.sh
 
 echo "DONE"
-```
+
 
 ---
 
