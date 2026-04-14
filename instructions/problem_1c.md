@@ -1,4 +1,4 @@
-# 🧾 **Instructions to Run Stripe Co-occurrence**
+# **Instructions to Run Stripe Co-occurrence**
 
 ## 1. Required Files
 
