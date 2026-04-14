@@ -1,0 +1,20 @@
+===== d = 1 =====
+real	0m27.148s
+user	0m45.602s
+sys	0m3.843s
+
+===== d = 2 =====
+real	0m27.073s
+user	0m47.614s
+sys	0m2.768s
+
+===== d = 3 =====
+real	0m27.093s
+user	0m44.362s
+sys	0m3.425s
+
+===== d = 4 =====
+real	0m27.196s
+user	0m46.704s
+sys	0m2.474s
+
