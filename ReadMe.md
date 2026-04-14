@@ -264,6 +264,9 @@ jps   # verify daemons
 hdfs dfs -mkdir -p /user/<user>/input
 hdfs dfs -put Wikipedia-EN-20120601_ARTICLES /user/<user>/input/
 hdfs dfs -put stopwords.txt /user/<user>/
+hdfs dfs -getmerge /user/$USER/input/Wikipedia-EN-20120601_ARTICLES /tmp/merged_input.txt
+hdfs dfs -mkdir -p /user/$USER/input_merged
+hdfs dfs -put /tmp/merged_input.txt /user/$USER/input_merged/
 ```
 
 ---
