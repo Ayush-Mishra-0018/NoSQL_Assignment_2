@@ -1,0 +1,46 @@
+Problem 2b execution instructions
+=================================
+
+
+Step 1: Start Hadoop
+--------------------
+start-dfs.sh
+start-yarn.sh
+jps
+
+[When you ran jps command, make sure NameNode, DataNode, ResourceManager, NodeManager are running]
+
+
+Step 2: Setup the hdfs environment
+(If already configured, you can go to step 3.owever, do note to use the right paths for the commands based on your setup)
+-------------------------------------------------------------------------------------------------------------------------
+# making the directories
+hdfs dfs -mkdir -p /user/santhosh
+hdfs dfs -mkdir -p /user/santhosh/input
+
+# Uploading the data (this would take a lot of time as we need to upload huge files to hdfs)
+hdfs dfs -put /path/to/Wikipedia-EN-20120601_ARTICLES/* /user/santhosh/input/
+hdfs dfs -put top100_df.tsv /user/santhosh/top100_df.tsv
+
+# (Optional: ) If you want to verify the upload
+hdfs dfs -ls /user/santhosh/
+hdfs dfs -ls /user/santhosh/input/ | head -10
+
+
+Step 3: Run the jar
+(Run the command in the directory containing the jar file, else adjust the path accordingly. Also note, the output directory must not exist in order for the code to run)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+hadoop jar assign2b.jar TFIDF \
+  /user/santhosh/input \
+  /user/santhosh/output \
+  /user/santhosh/top100_df.tsv
+
+
+Step 4: Checking the output and retrieving it to local storage
+--------------------------------------------------------------
+hdfs dfs -ls /user/santhosh/output/
+# Expected output: part-r-00000 & _SUCCESS
+
+hdfs dfs -get /user/santhosh/output/part-r-00000 part-r-00000
+mv part-r-00000 output.tsv
+
